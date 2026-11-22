@@ -1,0 +1,1653 @@
+/* ==========================================================================
+   Datepicker — Core
+   ========================================================================== */
+
+.datepicker {
+    --dp-primary: #2563eb;
+    --dp-primary-rgb: 37, 99, 235;
+    --dp-primary-hover: #1d4ed8;
+    --dp-primary-light: #eff6ff;
+    --dp-primary-soft: #dbeafe;
+
+    --dp-text: #172033;
+    --dp-text-secondary: #64748b;
+    --dp-muted: #b6c0ce;
+
+    --dp-border: #e2e8f0;
+    --dp-border-hover: #cbd5e1;
+
+    --dp-background: #ffffff;
+    --dp-surface: #f8fafc;
+
+    --dp-radius-input: 14px;
+    --dp-radius-panel: 20px;
+    --dp-radius-control: 12px;
+
+    --dp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+    position: relative;
+
+    width: 100%;
+
+    direction: rtl;
+
+    font-family: inherit;
+
+    z-index: 1;
+}
+
+.datepicker.is-open {
+    position: relative;
+    z-index: 2147483647;
+}
+
+.datepicker.is-open .calendar {
+    z-index: 2147483647;
+}
+
+/* ==========================================================================
+   Input
+   ========================================================================== */
+
+.datepicker .input {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    width: 100%;
+    min-height: 48px;
+    height: 48px;
+
+    padding: 0 44px;
+
+    border: 1px solid var(--dp-border);
+    border-radius: var(--dp-radius-input);
+
+    background: var(--dp-background);
+    color: var(--dp-text);
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    transition:
+            border-color .2s var(--dp-ease),
+            box-shadow .2s var(--dp-ease),
+            background-color .2s var(--dp-ease),
+            transform .15s var(--dp-ease);
+}
+
+.datepicker .input:hover {
+    border-color: var(--dp-border-hover);
+    background: var(--dp-surface);
+}
+
+.datepicker .input:active {
+    transform: scale(.995);
+}
+
+.datepicker .input:focus,
+.datepicker .input:focus-visible {
+    outline: none;
+
+    border-color: var(--dp-primary);
+
+    box-shadow:
+            0 0 0 4px var(--dp-primary-light),
+            0 2px 8px rgba(var(--dp-primary-rgb), .10);
+}
+
+
+/* ==========================================================================
+   Input Value
+   ========================================================================== */
+
+.datepicker .input-value {
+    min-width: 0;
+
+    direction: ltr;
+
+    overflow: hidden;
+
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    letter-spacing: .3px;
+}
+
+.datepicker .input-value.placeholder {
+    color: var(--dp-muted);
+    font-weight: 400;
+}
+
+
+/* ==========================================================================
+   Calendar Icon
+   ========================================================================== */
+
+.datepicker .calendar-icon {
+    position: absolute;
+    right: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+    height: 20px;
+
+    color: var(--dp-primary);
+
+    pointer-events: none;
+}
+
+.datepicker .calendar-icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+
+/* ==========================================================================
+   Clear Button
+   ========================================================================== */
+
+.datepicker .clear-button {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 25px;
+    height: 25px;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: transparent;
+    color: var(--dp-text-secondary);
+
+    font-size: 17px;
+    line-height: 1;
+
+    transform: translateY(-50%);
+
+    cursor: pointer;
+
+    transition:
+            background-color .15s var(--dp-ease),
+            color .15s var(--dp-ease);
+}
+
+.datepicker .clear-button:hover {
+    background: var(--dp-surface);
+    color: var(--dp-primary);
+}
+
+
+/* ==========================================================================
+   Calendar Panel
+   ========================================================================== */
+
+.datepicker .calendar {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+
+    box-sizing: border-box;
+
+    width: 320px;
+    max-width: calc(100vw - 24px);
+
+    padding: 16px;
+
+    border: 1px solid var(--dp-border);
+    border-radius: var(--dp-radius-panel);
+
+    background: var(--dp-background);
+
+    box-shadow:
+            0 24px 48px rgba(15, 23, 42, .12),
+            0 8px 16px rgba(15, 23, 42, .06),
+            0 0 0 1px rgba(15, 23, 42, .02);
+
+    z-index: 9999999;
+}
+
+
+/* ==========================================================================
+   Vue Transition
+   ========================================================================== */
+
+.datepicker-enter-active,
+.datepicker-leave-active {
+    transition:
+            opacity .18s var(--dp-ease),
+            transform .18s var(--dp-ease);
+}
+
+.datepicker-enter-from,
+.datepicker-leave-to {
+    opacity: 0;
+
+    transform:
+            translateY(-6px)
+            scale(.98);
+}
+
+
+/* ==========================================================================
+   Calendar Header
+   ========================================================================== */
+
+.datepicker .calendar-header {
+    display: grid;
+
+    grid-template-columns: 36px minmax(0, 1fr) 36px;
+
+    align-items: center;
+
+    gap: 8px;
+
+    width: 100%;
+    min-height: 40px;
+
+    margin-bottom: 12px;
+}
+
+
+/* ==========================================================================
+   Month / Year Selectors
+   ========================================================================== */
+
+.datepicker .selectors {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    width: 100%;
+}
+
+
+/* ==========================================================================
+   Custom Select
+   ========================================================================== */
+
+.datepicker .custom-select {
+    position: relative;
+
+    flex: 1 1 0;
+
+    min-width: 0;
+}
+
+
+/* ==========================================================================
+   Custom Select Trigger
+   ========================================================================== */
+
+.datepicker .custom-select-trigger {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    width: 100%;
+    height: 40px;
+
+    padding: 0 30px;
+
+    border: 1px solid var(--dp-border);
+    border-radius: var(--dp-radius-control);
+
+    background: var(--dp-background);
+    color: var(--dp-text);
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    transition:
+            border-color .2s var(--dp-ease),
+            background-color .2s var(--dp-ease),
+            box-shadow .2s var(--dp-ease),
+            transform .15s var(--dp-ease);
+}
+
+.datepicker .custom-select-trigger:hover {
+    border-color: var(--dp-primary);
+
+    background: var(--dp-primary-light);
+
+    box-shadow:
+            0 4px 12px rgba(var(--dp-primary-rgb), .08);
+}
+
+.datepicker .custom-select-trigger:focus-visible {
+    outline: none;
+
+    border-color: var(--dp-primary);
+
+    box-shadow:
+            0 0 0 3px var(--dp-primary-light);
+}
+
+.datepicker .custom-select-trigger:active {
+    transform: scale(.98);
+}
+
+
+/* ==========================================================================
+   Custom Select Arrow
+   ========================================================================== */
+
+.datepicker .custom-select-arrow {
+    position: absolute;
+
+    right: 10px;
+
+    width: 15px;
+    height: 15px;
+
+    color: var(--dp-primary);
+
+    pointer-events: none;
+
+    transition:
+            transform .2s var(--dp-ease);
+}
+
+.datepicker .custom-select.open .custom-select-arrow {
+    transform: rotate(180deg);
+}
+
+
+/* ==========================================================================
+   Custom Select Dropdown
+   ========================================================================== */
+
+.datepicker .custom-select-menu {
+    position: absolute;
+
+    top: calc(100% + 7px);
+    right: 0;
+
+    box-sizing: border-box;
+
+    width: 260px;
+
+    padding: 10px;
+
+    border: 1px solid var(--dp-border);
+    border-radius: 16px;
+
+    background: var(--dp-background);
+
+    box-shadow:
+            0 20px 45px rgba(15, 23, 42, .14),
+            0 6px 15px rgba(15, 23, 42, .06);
+
+    z-index: 500;
+}
+
+
+/* ==========================================================================
+   Dropdown Title
+   ========================================================================== */
+
+.datepicker .custom-select-title {
+    padding: 6px 8px 10px;
+
+    color: var(--dp-text-secondary);
+
+    font-size: 11px;
+    font-weight: 600;
+
+    text-align: center;
+}
+
+
+/* ==========================================================================
+   Month Grid
+   ========================================================================== */
+
+.datepicker .month-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 6px;
+}
+
+
+/* ==========================================================================
+   Month Option
+   ========================================================================== */
+
+.datepicker .month-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 0;
+    height: 38px;
+
+    padding: 0 5px;
+
+    border: 1px solid transparent;
+    border-radius: 10px;
+
+    background: transparent;
+    color: var(--dp-text);
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    transition:
+            background-color .15s var(--dp-ease),
+            color .15s var(--dp-ease),
+            border-color .15s var(--dp-ease),
+            transform .15s var(--dp-ease);
+}
+
+.datepicker .month-option:hover {
+    border-color: var(--dp-primary-soft);
+
+    background: var(--dp-primary-light);
+    color: var(--dp-primary);
+
+    transform: translateY(-1px);
+}
+
+.datepicker .month-option:active {
+    transform: scale(.96);
+}
+
+
+/* ==========================================================================
+   Selected Month
+   ========================================================================== */
+
+.datepicker .month-option.selected {
+    border-color: var(--dp-primary);
+
+    background:
+            linear-gradient(
+                    135deg,
+                    var(--dp-primary),
+                    var(--dp-primary-hover)
+            );
+
+    color: #ffffff;
+
+    font-weight: 700;
+
+    box-shadow:
+            0 5px 12px rgba(var(--dp-primary-rgb), .22);
+}
+
+.datepicker .month-option.selected:hover {
+    border-color: var(--dp-primary-hover);
+
+    background:
+            linear-gradient(
+                    135deg,
+                    var(--dp-primary-hover),
+                    var(--dp-primary)
+            );
+
+    color: #ffffff;
+
+    transform: none;
+}
+
+
+/* ==========================================================================
+   Year Select
+   ========================================================================== */
+
+.datepicker .year-select {
+    flex: 0 1 92px;
+
+    width: 92px;
+    height: 40px;
+
+    box-sizing: border-box;
+
+    padding: 0 8px;
+
+    border: 1px solid var(--dp-border);
+    border-radius: var(--dp-radius-control);
+
+    background: var(--dp-background);
+    color: var(--dp-text);
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    text-align: center;
+    text-align-last: center;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition:
+            border-color .2s var(--dp-ease),
+            background-color .2s var(--dp-ease),
+            box-shadow .2s var(--dp-ease);
+}
+
+.datepicker .year-select:hover {
+    border-color: var(--dp-primary);
+
+    background: var(--dp-primary-light);
+}
+
+.datepicker .year-select:focus {
+    border-color: var(--dp-primary);
+
+    box-shadow:
+            0 0 0 3px var(--dp-primary-light);
+}
+
+
+/* ==========================================================================
+   Dropdown Animation
+   ========================================================================== */
+
+.picker-dropdown-enter-active,
+.picker-dropdown-leave-active {
+    transition:
+            opacity .16s var(--dp-ease),
+            transform .16s var(--dp-ease);
+}
+
+.picker-dropdown-enter-from,
+.picker-dropdown-leave-to {
+    opacity: 0;
+
+    transform:
+            translateY(-5px)
+            scale(.97);
+}
+
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
+.datepicker .nav-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: transparent;
+    color: var(--dp-primary);
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+    transition:
+            background-color .2s var(--dp-ease),
+            color .2s var(--dp-ease),
+            transform .15s var(--dp-ease);
+}
+
+.datepicker .nav-button:hover {
+    background: var(--dp-primary-light);
+    color: var(--dp-primary-hover);
+}
+
+.datepicker .nav-button:active {
+    transform: scale(.9);
+}
+
+
+/* ==========================================================================
+   Weekdays
+   ========================================================================== */
+
+.datepicker .weekdays {
+    display: grid;
+
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+
+    margin-bottom: 6px;
+
+    color: var(--dp-text-secondary);
+
+    font-size: 11px;
+    font-weight: 600;
+
+    text-align: center;
+}
+
+.datepicker .weekdays span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 28px;
+}
+
+
+/* ==========================================================================
+   Days
+   ========================================================================== */
+
+.datepicker .days {
+    display: grid;
+
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+
+    gap: 4px;
+}
+
+.datepicker .days button {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+
+    aspect-ratio: 1;
+
+    max-width: 36px;
+    max-height: 36px;
+
+    margin: auto;
+    padding: 0;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: transparent;
+    color: var(--dp-text);
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+            background-color .15s var(--dp-ease),
+            color .15s var(--dp-ease),
+            transform .15s var(--dp-ease),
+            box-shadow .15s var(--dp-ease);
+}
+
+.datepicker .days button:hover {
+    background: var(--dp-primary-light);
+    color: var(--dp-primary);
+
+    transform: translateY(-1px);
+}
+
+.datepicker .days button:active {
+    transform: scale(.92);
+}
+
+
+/* ==========================================================================
+   Muted Days
+   ========================================================================== */
+
+.datepicker .days button.muted {
+    color: var(--dp-muted);
+}
+
+.datepicker .days button.muted:hover {
+    background: var(--dp-surface);
+    color: var(--dp-muted);
+
+    transform: none;
+}
+
+
+/* ==========================================================================
+   Today
+   ========================================================================== */
+
+.datepicker .days button.today {
+    color: var(--dp-primary);
+
+    font-weight: 700;
+}
+
+.datepicker .days button.today::after {
+    content: '';
+
+    position: absolute;
+
+    bottom: 4px;
+    left: 50%;
+
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background: var(--dp-primary);
+
+    transform: translateX(-50%);
+}
+
+
+/* ==========================================================================
+   Selected Day
+   ========================================================================== */
+
+.datepicker .days button.selected {
+    background:
+            linear-gradient(
+                    135deg,
+                    var(--dp-primary),
+                    var(--dp-primary-hover)
+            );
+
+    color: #ffffff;
+
+    font-weight: 700;
+
+    box-shadow:
+            0 6px 14px rgba(var(--dp-primary-rgb), .30);
+}
+
+.datepicker .days button.selected:hover {
+    color: #ffffff;
+
+    transform: none;
+
+    filter: brightness(1.04);
+}
+
+.datepicker .days button.today.selected::after {
+    display: none;
+}
+
+
+/* ==========================================================================
+   Today Button
+   ========================================================================== */
+
+.datepicker .today-button {
+    width: 100%;
+    min-height: 38px;
+    height: 38px;
+
+    margin-top: 14px;
+    padding: 0 12px;
+
+    border: 1px solid var(--dp-primary-soft);
+    border-radius: var(--dp-radius-control);
+
+    background: var(--dp-primary-light);
+    color: var(--dp-primary);
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+            border-color .2s var(--dp-ease),
+            background-color .2s var(--dp-ease),
+            color .2s var(--dp-ease),
+            box-shadow .2s var(--dp-ease),
+            transform .15s var(--dp-ease);
+}
+
+.datepicker .today-button:hover {
+    border-color: var(--dp-primary);
+
+    background: var(--dp-primary);
+
+    color: #ffffff;
+
+    box-shadow:
+            0 8px 18px rgba(var(--dp-primary-rgb), .20);
+}
+
+.datepicker .today-button:active {
+    transform: scale(.98);
+}
+
+
+/* ==========================================================================
+   Time Picker — Datetime
+   ========================================================================== */
+
+.datepicker .time-picker {
+    margin-top: 14px;
+    padding-top: 14px;
+
+    border-top: 1px dashed var(--dp-border);
+}
+
+.datepicker .time-picker-title {
+    margin-bottom: 10px;
+
+    color: var(--dp-text-secondary);
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-align: center;
+}
+
+.datepicker .time-fields {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    width: 100%;
+}
+
+.datepicker .time-fields.compact {
+    direction: ltr;
+}
+
+.datepicker .time-fields select {
+    box-sizing: border-box;
+
+    width: 64px;
+    min-width: 0;
+    height: 42px;
+
+    padding: 0 7px;
+
+    border: 1px solid var(--dp-border);
+    border-radius: var(--dp-radius-control);
+
+    background: var(--dp-background);
+    color: var(--dp-text);
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    text-align: center;
+    text-align-last: center;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition:
+            border-color .2s var(--dp-ease),
+            box-shadow .2s var(--dp-ease),
+            background-color .2s var(--dp-ease);
+}
+
+.datepicker .time-fields select:hover {
+    border-color: var(--dp-border-hover);
+    background: var(--dp-surface);
+}
+
+.datepicker .time-fields select:focus {
+    border-color: var(--dp-primary);
+
+    box-shadow:
+            0 0 0 3px var(--dp-primary-light);
+}
+
+.datepicker .time-fields > span {
+    flex: 0 0 auto;
+
+    color: var(--dp-text-secondary);
+
+    font-size: 18px;
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+
+/* ==========================================================================
+   Time Only
+   ========================================================================== */
+
+.datepicker .time-only {
+    width: 100%;
+
+    padding: 6px 2px 2px;
+
+    text-align: center;
+}
+
+.datepicker .time-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    margin: 0 auto 10px;
+
+    border-radius: 14px;
+
+    background: var(--dp-primary-light);
+    color: var(--dp-primary);
+}
+
+.datepicker .time-icon svg {
+    width: 25px;
+    height: 25px;
+}
+
+.datepicker .time-title {
+    margin-bottom: 17px;
+
+    color: var(--dp-text);
+
+    font-size: 15px;
+    font-weight: 700;
+
+    text-align: center;
+}
+
+.datepicker .time-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 5px;
+
+    min-width: 0;
+}
+
+.datepicker .time-field > span {
+    color: var(--dp-text-secondary);
+
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.datepicker .time-field select {
+    box-sizing: border-box;
+
+    width: 68px;
+    height: 46px;
+
+    padding: 0 7px;
+
+    border: 1px solid var(--dp-border);
+    border-radius: var(--dp-radius-control);
+
+    background: var(--dp-background);
+    color: var(--dp-text);
+
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+
+    text-align: center;
+    text-align-last: center;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition:
+            border-color .2s var(--dp-ease),
+            box-shadow .2s var(--dp-ease),
+            background-color .2s var(--dp-ease);
+}
+
+.datepicker .time-field select:hover {
+    border-color: var(--dp-border-hover);
+    background: var(--dp-surface);
+}
+
+.datepicker .time-field select:focus {
+    border-color: var(--dp-primary);
+
+    box-shadow:
+            0 0 0 3px var(--dp-primary-light);
+}
+
+.datepicker .time-separator {
+    flex: 0 0 auto;
+
+    margin-top: 17px;
+
+    color: var(--dp-text-secondary);
+
+    font-size: 19px;
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+
+/* ==========================================================================
+   Confirm Button
+   ========================================================================== */
+
+.datepicker .confirm-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 44px;
+    height: 44px;
+
+    margin-top: 14px;
+    padding: 0 14px;
+
+    border: 0;
+    border-radius: var(--dp-radius-control);
+
+    background:
+            linear-gradient(
+                    135deg,
+                    var(--dp-primary),
+                    var(--dp-primary-hover)
+            );
+
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+            box-shadow .2s var(--dp-ease),
+            transform .15s var(--dp-ease),
+            filter .2s var(--dp-ease);
+}
+
+.datepicker .confirm-button:hover {
+    filter: brightness(1.05);
+
+    box-shadow:
+            0 8px 20px rgba(var(--dp-primary-rgb), .28);
+}
+
+.datepicker .confirm-button:active {
+    transform: scale(.98);
+}
+
+
+/* ==========================================================================
+   Mobile — Bottom Sheet
+   ========================================================================== */
+/* ==========================================================================
+   Mobile — Bottom Sheet
+   ========================================================================== */
+
+@media (max-width: 480px) {
+
+    .datepicker.is-open {
+        z-index: 2147483647;
+    }
+
+    .datepicker.is-open .calendar {
+        position: fixed;
+
+        top: auto;
+        right: 10px;
+        bottom: 80px;
+        left: 10px;
+
+        width: auto;
+        max-width: none;
+
+        padding:
+                14px 14px
+                calc(14px + env(safe-area-inset-bottom, 0px));
+
+        border-radius: 22px;
+
+        z-index: 2147483647;
+
+        box-shadow:
+                0 -8px 20px rgba(15, 23, 42, .06),
+                0 24px 60px rgba(15, 23, 42, .18);
+    }
+
+    .datepicker .calendar::before {
+        content: '';
+
+        position: absolute;
+
+        top: 8px;
+        left: 50%;
+
+        width: 36px;
+        height: 4px;
+
+        border-radius: 3px;
+
+        background: var(--dp-border);
+
+        transform: translateX(-50%);
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Header
+       ---------------------------------------------------------------------- */
+
+    .datepicker .calendar-header {
+        grid-template-columns:
+            34px
+            minmax(0, 1fr)
+            34px;
+
+        gap: 6px;
+
+        margin-top: 8px;
+        margin-bottom: 10px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Month / Year Selectors
+       ---------------------------------------------------------------------- */
+
+    .datepicker .selectors {
+        gap: 6px;
+    }
+
+    .datepicker .selectors .custom-select {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .datepicker .selectors .custom-select-trigger,
+    .datepicker .selectors .year-select {
+        height: 38px;
+
+        font-size: 12px;
+
+        border-radius: 10px;
+    }
+
+    .datepicker .selectors .custom-select-trigger {
+        padding: 0 26px 0 8px;
+    }
+
+    .datepicker .selectors .custom-select-arrow {
+        right: 8px;
+
+        width: 14px;
+        height: 14px;
+    }
+
+    .datepicker .selectors .year-select {
+        flex: 0 1 88px;
+
+        width: 88px;
+        min-width: 0;
+
+        padding: 0 8px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Month Dropdown
+       ---------------------------------------------------------------------- */
+
+    .datepicker .custom-select-menu {
+        width: 250px;
+
+        padding: 9px;
+
+        border-radius: 15px;
+
+        z-index: 1000;
+    }
+
+    .datepicker .month-grid {
+        gap: 5px;
+    }
+
+    .datepicker .month-option {
+        height: 36px;
+
+        font-size: 11px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Navigation
+       ---------------------------------------------------------------------- */
+
+    .datepicker .nav-button {
+        width: 34px;
+        height: 34px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Weekdays
+       ---------------------------------------------------------------------- */
+
+    .datepicker .weekdays {
+        font-size: 10px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Days
+       ---------------------------------------------------------------------- */
+
+    .datepicker .days {
+        gap: 3px;
+    }
+
+    .datepicker .days button {
+        max-width: none;
+        max-height: none;
+
+        border-radius: 10px;
+
+        font-size: 12px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Today
+       ---------------------------------------------------------------------- */
+
+    .datepicker .today-button {
+        margin-top: 12px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Time Picker
+       ---------------------------------------------------------------------- */
+
+    .datepicker .time-picker {
+        margin-top: 12px;
+        padding-top: 12px;
+    }
+
+    .datepicker .time-fields {
+        gap: 5px;
+    }
+
+    .datepicker .time-fields select {
+        flex: 1;
+
+        width: auto;
+        max-width: 72px;
+
+        height: 42px;
+
+        font-size: 13px;
+    }
+
+    .datepicker .time-fields > span {
+        font-size: 16px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Time Only
+       ---------------------------------------------------------------------- */
+
+    .datepicker .time-only {
+        padding-top: 4px;
+    }
+
+    .datepicker .time-title {
+        margin-bottom: 15px;
+    }
+
+    .datepicker .time-field select {
+        width: 64px;
+        height: 44px;
+
+        font-size: 15px;
+    }
+
+    .datepicker .time-separator {
+        margin-top: 17px;
+
+        font-size: 17px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Confirm
+       ---------------------------------------------------------------------- */
+
+    .datepicker .confirm-button {
+        height: 42px;
+
+        margin-top: 11px;
+    }
+}
+
+
+/* ==========================================================================
+   Small Mobile
+   ========================================================================== */
+
+@media (max-width: 360px) {
+
+    .datepicker .calendar {
+        right: 7px;
+        bottom: 7px;
+        left: 7px;
+
+        padding:
+                12px 12px
+                calc(12px + env(safe-area-inset-bottom, 0px));
+
+        border-radius: 18px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Header
+       ---------------------------------------------------------------------- */
+
+    .datepicker .calendar-header {
+        grid-template-columns:
+            32px
+            minmax(0, 1fr)
+            32px;
+
+        gap: 4px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Month / Year Selectors
+       ---------------------------------------------------------------------- */
+
+    .datepicker .selectors {
+        gap: 5px;
+    }
+
+    .datepicker .selectors .custom-select-trigger,
+    .datepicker .selectors .year-select {
+        height: 36px;
+
+        font-size: 11px;
+
+        border-radius: 10px;
+    }
+
+    .datepicker .selectors .custom-select-trigger {
+        padding: 0 23px 0 6px;
+    }
+
+    .datepicker .selectors .custom-select-arrow {
+        right: 7px;
+
+        width: 13px;
+        height: 13px;
+    }
+
+    .datepicker .selectors .year-select {
+        flex: 0 1 78px;
+
+        width: 78px;
+
+        padding: 0 6px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Month Dropdown
+       ---------------------------------------------------------------------- */
+
+    .datepicker .custom-select-menu {
+        width: 235px;
+
+        padding: 8px;
+
+        border-radius: 14px;
+    }
+
+    .datepicker .month-grid {
+        gap: 4px;
+    }
+
+    .datepicker .month-option {
+        height: 34px;
+
+        border-radius: 9px;
+
+        font-size: 10px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Navigation
+       ---------------------------------------------------------------------- */
+
+    .datepicker .nav-button {
+        width: 32px;
+        height: 32px;
+
+        font-size: 19px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Weekdays
+       ---------------------------------------------------------------------- */
+
+    .datepicker .weekdays span {
+        height: 25px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Days
+       ---------------------------------------------------------------------- */
+
+    .datepicker .days {
+        gap: 2px;
+    }
+
+    .datepicker .days button {
+        font-size: 11px;
+    }
+
+
+    /* ----------------------------------------------------------------------
+       Time Picker
+       ---------------------------------------------------------------------- */
+
+    .datepicker .time-picker {
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+
+    .datepicker .time-fields {
+        gap: 3px;
+    }
+
+    .datepicker .time-fields select {
+        height: 40px;
+
+        padding: 0 4px;
+
+        font-size: 12px;
+    }
+
+    .datepicker .time-fields > span {
+        font-size: 14px;
+    }
+
+    .datepicker .time-field select {
+        width: 58px;
+        height: 42px;
+
+        font-size: 14px;
+    }
+
+    .datepicker .time-separator {
+        margin-top: 16px;
+
+        font-size: 16px;
+    }
+
+    .datepicker .time-icon {
+        width: 42px;
+        height: 42px;
+
+        margin-bottom: 8px;
+    }
+
+    .datepicker .time-icon svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .datepicker .time-title {
+        margin-bottom: 13px;
+
+        font-size: 14px;
+    }
+}
+
+
+/* ==========================================================================
+   Touch Devices
+   ========================================================================== */
+
+@media (hover: none) and (pointer: coarse) {
+
+    .datepicker .days button:hover,
+    .datepicker .nav-button:hover,
+    .datepicker .today-button:hover {
+        transform: none;
+    }
+
+    .datepicker .custom-select-trigger:hover {
+        border-color: var(--dp-border);
+
+        background: var(--dp-background);
+
+        box-shadow: none;
+    }
+
+    .datepicker .month-option:hover {
+        border-color: transparent;
+
+        background: transparent;
+        color: var(--dp-text);
+
+        transform: none;
+    }
+
+    .datepicker .month-option.selected:hover {
+        border-color: var(--dp-primary);
+
+        background:
+                linear-gradient(
+                        135deg,
+                        var(--dp-primary),
+                        var(--dp-primary-hover)
+                );
+
+        color: #ffffff;
+    }
+
+    .datepicker .year-select:hover {
+        border-color: var(--dp-border);
+
+        background: var(--dp-background);
+    }
+
+    .datepicker .days button {
+        min-height: 36px;
+    }
+
+    .datepicker .time-fields select,
+    .datepicker .time-field select,
+    .datepicker .confirm-button {
+        min-height: 42px;
+    }
+
+    .datepicker .time-fields select:hover,
+    .datepicker .time-field select:hover {
+        background: var(--dp-background);
+    }
+}
+
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .datepicker *,
+    .datepicker-enter-active,
+    .datepicker-leave-active,
+    .picker-dropdown-enter-active,
+    .picker-dropdown-leave-active {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+
+.days button:disabled,
+.month-option:disabled,
+.year-select option:disabled,
+.nav-button:disabled,
+.today-button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.days button:disabled {
+    pointer-events: none;
+}
